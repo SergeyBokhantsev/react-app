@@ -1,8 +1,5 @@
 name: Build and Deploy UI WebApp
 
-env:
-  REACT_APP_VAR1: ${{ secrets.APP_CFG_CS }}
-
 on:
   push:
     branches:
@@ -23,6 +20,8 @@ jobs:
           submodules: true
           lfs: false
       - name: Build And Deploy
+        env:
+          REACT_APP_VAR1: ${{ secrets.APP_CFG_CS }}
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
