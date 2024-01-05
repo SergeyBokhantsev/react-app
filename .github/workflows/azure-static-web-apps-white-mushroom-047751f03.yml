@@ -1,5 +1,8 @@
 name: Build and Deploy UI WebApp
 
+env:
+  REACT_APP_VAR1: ${{ secrets.APP_CFG_CS }}
+
 on:
   push:
     branches:
