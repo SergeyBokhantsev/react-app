@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -31,17 +31,12 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - name: Install deps
-      run: | 
-        cd my-app
-        npm ci
+      run: npm ci
     - name: Build the app
-      run: |
-        cd my-app
-        npm run build
+      run: npm run build
     - name: Run tests
-        cd my-app
-        npm run test
+      run: npm run test
     - name: Start the app
-        cd my-app
+      run: |
         npm start & 
         npx wait-on --timeout 60000
