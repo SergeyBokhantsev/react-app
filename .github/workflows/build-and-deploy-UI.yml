@@ -31,7 +31,7 @@ jobs:
         run: npm ci
         
       - name: Build the app
-        run: REACT_APP_VAR1=${{ secrets.APP_CFG_CS }} npm run build
+        run: REACT_APP_AZ_ENTRA_APP_AUTHORITY=${{ vars.REACT_APP_AZ_ENTRA_APP_AUTHORITY }} REACT_APP_AZ_ENTRA_APP_ID=${{ vars.REACT_APP_AZ_ENTRA_APP_ID }} REACT_APP_AZ_ENTRA_APP_REDIRECT_URL=${{ vars.REACT_APP_AZ_ENTRA_APP_REDIRECT_URL }} npm run build
           
       - name: Deploy (only Main branch)
         if: ${{ github.ref == 'refs/heads/main' }}

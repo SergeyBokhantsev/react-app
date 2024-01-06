@@ -1,5 +1,5 @@
 import './App.css';
-import { config } from "./config.js"
+import { msal_config } from "./config.js"
 import { PublicClientApplication } from '@azure/msal-browser';
 import { Component } from 'react';
 
@@ -15,9 +15,9 @@ constructor(props){
   this.login = this.login.bind(this)
   this.publicClientApplication = new PublicClientApplication({
     auth: {
-      clientId: config.appId,
-      redirectUrl: config.redirectUrl,
-      authority: config.authority
+      clientId: msal_config.appId,
+      redirectUrl: msal_config.redirectUrl,
+      authority: msal_config.authority
     },
     cache: {
       cacheLocation: "sessionStorage",
@@ -34,7 +34,7 @@ async login(){
 
     await this.publicClientApplication.loginPopup(
       {
-        scopes: config.scopes,
+        scopes: msal_config.scopes,
         prompt: "select_account"
       }).then((response) => {
         console.log(response);
@@ -62,17 +62,14 @@ logout() {
 }
 
 render() {
-
-  const myVar = process.env.REACT_APP_VAR1;
-  console.log("REACT_APP_VAR1 = " + myVar);
-
   return(
     <div className='App'>
       <header className='App-header'>
         { this.state.isAuthenticated ? <p>LOGGED IN as {this.state.authResponse.account.name}</p> 
-        : <p><button onClick={() => this.login()}>Log-in )) {myVar}</button></p>
+        : <p><button onClick={() => this.login()}>Log-in</button></p>
         }
       </header>
+      <p>App Id: {msal_config.appId}</p>
     </div>
   );
 }
