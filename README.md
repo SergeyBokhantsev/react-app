@@ -1,3 +1,21 @@
+# App configuration in Azure
+
+1. Create new Azure Entra App Registration
+	- In 'API Permissions' tab click on 'Add Permission', open 'APIs my organization uses' tab and select 'Log Analytics API' then check 'Data.Read' scope.
+2. Assign 'Reader' role for the Entra App in all required AI Workspaces.
+3. Same way, assign 'Reader' role in AI Workspaces for Users that mut be permitted to access the logs.
+
+# References
+
+The login flow (implicit grant OAuth2 flow): https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-implicit-grant-flow
+
+Register AD App, set Data.Read permission and grant access to AI workspace: https://learn.microsoft.com/en-us/azure/azure-monitor/logs/api/access-api
+(Then we're going via implicit flow)
+
+How to define the required scope correctly: https://blog.skehan.me/index.php/2022/01/06/react-msal-aad-errors-aadsts650053-or-aadsts500011/
+
+MSAL-browser js lib FAQ: https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/FAQ.md
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
