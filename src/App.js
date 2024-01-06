@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { config } from "./config.js"
 import { PublicClientApplication } from '@azure/msal-browser';
