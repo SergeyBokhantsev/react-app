@@ -62,11 +62,15 @@ logout() {
 }
 
 render() {
+
+  const myVar = process.env.REACT_APP_VAR1;
+  console.log("REACT_APP_VAR1 = " + myVar);
+
   return(
     <div className='App'>
       <header className='App-header'>
         { this.state.isAuthenticated ? <p>LOGGED IN as {this.state.authResponse.account.name}</p> 
-        : <p><button onClick={() => this.login()}>Log-in</button></p>
+        : <p><button onClick={() => this.login()}>Log-in )) {myVar}</button></p>
         }
       </header>
     </div>

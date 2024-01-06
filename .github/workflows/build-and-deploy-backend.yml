@@ -1,13 +1,16 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Azure Function
+name: Build and deploy Backend
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/backend' # set this to the path to your web app project, defaults to the repository root
@@ -16,6 +19,7 @@ env:
 jobs:
   build-and-deploy:
     runs-on: windows-latest
+    environment: default
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v4
@@ -25,14 +29,15 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: 'Resolve Project Dependencies Using Dotnet'
+      - name: 'Dotnet Build'
         shell: pwsh
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           dotnet build --configuration Release --output ./output
           popd
 
-      - name: 'Run Azure Functions Action'
+      - name: 'Publish'
+        if: ${{ github.ref == 'refs/heads/main' }}
         uses: Azure/functions-action@v1
         id: fa
         with:
