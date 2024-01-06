@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace FunctionApp.Exceptions
 {
-    public class FlowException : Exception
+    public class WorkFlowException : Exception
     {
         public HttpStatusCode StatusCode {  get; }
 
-        public FlowException(HttpStatusCode statusCode,
+        public WorkFlowException(HttpStatusCode statusCode,
             string? message, 
             Exception? innerException = null)
             : base(message, innerException)

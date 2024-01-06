@@ -1,4 +1,6 @@
-﻿using FunctionApp.Exceptions;
+﻿using Azure;
+using FunctionApp.Exceptions;
+using FunctionApp.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.Functions.Worker.Middleware;
@@ -14,18 +16,29 @@ namespace FunctionApp.Middleware
             {
                 await next(context);
             }
+            catch (AggregateException ex)
+            {
+                await HandleException(context, ex.InnerExceptions.Count() == 1 ? ex.InnerException! : ex);
+            }
             catch (Exception ex)
             {
-                var code = ex is FlowException flowException
-                    ? flowException.StatusCode
-                    : HttpStatusCode.InternalServerError;
-
-                var request = await context.GetHttpRequestDataAsync();
-                var response = request!.CreateResponse();
-                response.StatusCode = code;
-                await response.WriteStringAsync(ex.Message);
-                context.GetInvocationResult().Value = response;
+                await HandleException(context, ex);
             }
+        }
+
+        private async Task HandleException(FunctionContext context, Exception ex)
+        {
+            var code = ex is WorkFlowException flowException
+                       ? flowException.StatusCode
+                       : ex is RequestFailedException reqFailException
+                       ? (HttpStatusCode)reqFailException.Status
+                       : HttpStatusCode.InternalServerError;
+
+            var request = await context.GetHttpRequestDataAsync();
+            var response = request!.CreateResponse();
+            await response.WriteAsJsonAsync(new Error { Message = ex.Message });
+            response.StatusCode = code;
+            context.GetInvocationResult().Value = response;
         }
     }
 }

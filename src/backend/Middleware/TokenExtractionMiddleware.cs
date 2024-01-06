@@ -1,4 +1,5 @@
-﻿using FunctionApp.Azure;
+﻿using Azure.Core;
+using FunctionApp.Azure;
 using FunctionApp.Exceptions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Middleware;
@@ -24,17 +25,17 @@ namespace FunctionApp.Middleware
                 && !string.IsNullOrWhiteSpace(headersString))
             {
                 var headers = JsonSerializer.Deserialize<Dictionary<string, string>>(headersString)
-                    ?? throw new FlowException(HttpStatusCode.BadRequest, $"Unable to deserialie headers from: {headersString[..Math.Min(headersString.Length, 10)]}...");
+                    ?? throw new WorkFlowException(HttpStatusCode.BadRequest, $"Unable to deserialie headers from: {headersString[..Math.Min(headersString.Length, 10)]}...");
 
                 if (headers.TryGetValue("Authorization", out string? token) && !string.IsNullOrWhiteSpace(token))
                 {
                     token = token.Replace("Bearer ", string.Empty, StringComparison.OrdinalIgnoreCase);
 
-                    context.Items.Add("Credential", new PredefinedTokenCredential(token));
+                    context.Items.Add(nameof(TokenExtractionMiddleware), new PredefinedTokenCredential(token));
                 }
             }
 
-            return next(context);
+            return next(context!);
         }
     }
 }
