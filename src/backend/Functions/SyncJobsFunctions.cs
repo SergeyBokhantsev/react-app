@@ -1,22 +1,26 @@
 using System.Net;
+using FunctionApp.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 
-namespace FunctionApp
+namespace FunctionApp.Functions
 {
-    public class Function1
+    public class SyncJobsFunctions
     {
         private readonly ILogger _logger;
 
-        public Function1(ILoggerFactory loggerFactory)
+        public SyncJobsFunctions(ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger<Function1>();
+            _logger = loggerFactory.CreateLogger<SyncJobsFunctions>();
         }
 
-        [Function("Function1")]
-        public HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        [Function("search-by-job-id")]
+        public HttpResponseData SearchByJobId([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext context)
         {
+            var jobId = req.FromQueryRequired("jobId");
+            var workspaceId = req.FromQueryRequired("workspaceId");
+
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
             var response = req.CreateResponse(HttpStatusCode.OK);
