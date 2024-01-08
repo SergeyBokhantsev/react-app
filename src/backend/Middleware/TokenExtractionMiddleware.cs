@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Azure.Identity;
 using FunctionApp.Azure;
 using FunctionApp.Exceptions;
 using Microsoft.Azure.Functions.Worker;
@@ -29,9 +30,21 @@ namespace FunctionApp.Middleware
 
                 if (headers.TryGetValue("Authorization", out string? token) && !string.IsNullOrWhiteSpace(token))
                 {
-                    token = token.Replace("Bearer ", string.Empty, StringComparison.OrdinalIgnoreCase);
-
-                    context.Items.Add(nameof(TokenExtractionMiddleware), new PredefinedTokenCredential(token));
+                    if (token.StartsWith("Bearer "))
+                    {
+                        token = token.Replace("Bearer ", string.Empty, StringComparison.OrdinalIgnoreCase);
+                        var credential = DelegatedTokenCredential.Create((ctx, ct) => new AccessToken(token, DateTimeOffset.Now.AddHours(3)));
+                        context.Items.Add(nameof(TokenExtractionMiddleware), credential);
+                    }
+                    else if (token.StartsWith("Basic "))
+                    {
+                        token = token.Replace("Basic ", string.Empty, StringComparison.OrdinalIgnoreCase);
+                        var basicCreds = Encoding.UTF8.GetString(Convert.FromBase64String(token)).Split(':');
+                        var tenantId = basicCreds[0];
+                        var appId = basicCreds[1];
+                        var appSecret = basicCreds[2];
+                        context.Items.Add(nameof(TokenExtractionMiddleware), new ClientSecretCredential(tenantId, appId, appSecret));
+                    }
                 }
             }
 

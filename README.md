@@ -1,7 +1,21 @@
+# Architecture
+
+1. Frontend UI WebApp (ReactJS)
+2. Backend API (Azure Functions)
+
+# Workflow
+
+1. Frontens UI App authorizes the user with organization's MS Entra account. The authorization requires only 'api.loganalytics.io/data.read' permission. Successful authorization provides user's access token to the Frontend app. This token is stored in a session storage only.
+
+2. Frontend UI App makes requests to backend API, providing users access token. Backend API performs requests to Azure Log Analytics API with user's token. The token is not stored on backend.
+
 # App configuration in Azure
 
 1. Create new Azure Entra App Registration
 	- In 'API Permissions' tab click on 'Add Permission', open 'APIs my organization uses' tab and select 'Log Analytics API' then check 'Data.Read' scope.
+	- Also in 'API Permissions' you can grand admin consent to avoid users to request access from admins.
+	- In 'Authentication' tab click 'Add Platform' and add SPA, then set Redirect URL with front UI app URL
+	- Also in 'Authentication' tab check the 'Access tokens (for implicit flow)' checkbox
 2. Assign 'Reader' role for the Entra App in all required AI Workspaces.
 3. Same way, assign 'Reader' role in AI Workspaces for Users that mut be permitted to access the logs.
 

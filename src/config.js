@@ -6,3 +6,7 @@ export const msal_config = {
     ],
     authority: process.env.REACT_APP_AZ_ENTRA_APP_AUTHORITY
 };
+
+export const api_config = {
+    url: process.env.REACT_APP_API_URL + '/api/',
+}

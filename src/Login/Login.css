@@ -1,0 +1,22 @@
+.login {
+  text-align: center;
+  width: 600px;
+}
+
+.login-with-secrets-labels {
+  width: auto;
+  margin: 10px;
+}
+
+.login-with-secrets-inputs {
+  width: auto;
+  margin: 10px;
+}
+
+.main-block {
+  margin-top: 80px;
+}
+
+.hor {
+  display: flex;
+}

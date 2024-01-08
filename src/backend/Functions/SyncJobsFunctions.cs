@@ -18,6 +18,16 @@ namespace FunctionApp.Functions
             _logger = loggerFactory.CreateLogger<SyncJobsFunctions>();
         }
 
+        [Function("get-workspaces")]
+        public Task<HttpResponseData> GetWorkspaces([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
+        {
+            return MakeResponse(req, new List<Workspace>()
+                {
+                    new Workspace { Name="SAPCFC-Internal-QA1", Id = "1eceb865-695e-4711-83b4-de88e6dc504a" },
+                    new Workspace { Name="SAPCFC-Internal-Dev1", Id = "3d5fad1f-c86f-432d-9aa1-d55533c283bd" },
+                });
+        }
+
         [Function("search-by-job-id")]
         public async Task<HttpResponseData> SearchByJobId([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext context)
         {
@@ -30,7 +40,7 @@ namespace FunctionApp.Functions
 
             var result = new List<SyncJob>();
 
-            var targetJob = await service.SearchByJobId(jobId, workspaceId, DateTimeOffset.Now.AddDays(-days), TimeSpan.FromDays(days));
+            var targetJob = await service.SearchByJobId(workspaceId, jobId, DateTimeOffset.Now.AddDays(-days), TimeSpan.FromDays(days));
 
             targetJob.IsTarget = true;
 
@@ -59,6 +69,7 @@ namespace FunctionApp.Functions
         {
             var response = request.CreateResponse();
             await response.WriteAsJsonAsync(data);
+            response.Headers.Add("Access-Control-Allow-Origin", request.Headers.GetValues("Origin"));
             return response;
         }
     }
