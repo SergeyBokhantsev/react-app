@@ -32,15 +32,17 @@ namespace FunctionApp.Functions
         public async Task<HttpResponseData> SearchByJobId([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req, FunctionContext context)
         {
             var jobId = req.FromQuery("jobId");
-            var workspaceId = req.FromQuery("workspaceId");
+            var workspaceIds = req.FromQuery("workspaceId").Split(':');
             if (!int.TryParse(req.FromQuery("days"), out int days)) throw new ConflictException("Cannot parse provided 'days' parameter");
             if (!int.TryParse(req.FromQuery("related"), out int related)) throw new ConflictException("Cannot parse provided 'related' parameter");
+            if (!workspaceIds.Any())
+                throw new WorkFlowException(HttpStatusCode.BadRequest, "No Workspaces selected");
 
             var service = new LogAnalyticsService(context.GetTokenCredential());
 
             var result = new List<SyncJob>();
 
-            var targetJob = await service.SearchByJobId(workspaceId, jobId, DateTimeOffset.Now.AddDays(-days), TimeSpan.FromDays(days));
+            var targetJob = await service.SearchByJobId(workspaceIds, jobId, DateTimeOffset.Now.AddDays(-days), TimeSpan.FromDays(days));
 
             targetJob.IsTarget = true;
 
@@ -48,7 +50,7 @@ namespace FunctionApp.Functions
 
             // predeceasing jobs
             result.AddRange(await service.SearchByEmployeeIdStartingFrom(
-                workspaceId: workspaceId,
+                workspaceId: targetJob.WorkspaceId,
                 employeeId: targetJob.EmployeeId,
                 datetime: targetJob.Time.AddSeconds(-5),
                 count: related,
@@ -56,7 +58,7 @@ namespace FunctionApp.Functions
 
             // next jobs
             result.AddRange(await service.SearchByEmployeeIdStartingFrom(
-                workspaceId: workspaceId,
+                workspaceId: targetJob.WorkspaceId,
                 employeeId: targetJob.EmployeeId,
                 datetime: targetJob.Time.AddSeconds(5),
                 count: related,
@@ -69,7 +71,6 @@ namespace FunctionApp.Functions
         {
             var response = request.CreateResponse();
             await response.WriteAsJsonAsync(data);
-            response.Headers.Add("Access-Control-Allow-Origin", request.Headers.GetValues("Origin"));
             return response;
         }
     }

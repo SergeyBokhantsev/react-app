@@ -13,6 +13,8 @@ class Login extends Component {
   constructor(props){
     super(props);
 
+    console.log("Login constructor  ...");
+
     this.login = this.login.bind(this)
 
     this.publicClientApplication = new PublicClientApplication({
@@ -69,15 +71,31 @@ class Login extends Component {
     this.customAppSecret = event.target.value;
  }
 
+ isEmpty(value) {
+  return (value == null || (typeof value === "string" && value.trim().length === 0));
+}
+
 loginWithCustomCredentials() {
+
+    const tenantId =  this.isEmpty(this.customTenantId) ? process.env.REACT_APP_DEF_TENANT_ID : this.customTenantId;
+    const appId = this.isEmpty(this.customTenantId)  ? process.env.REACT_APP_DEF_CLIENT_ID : this.customTenantId;
+    const appSecret = this.isEmpty(this.customTenantId)  ? process.env.REACT_APP_DEF_CLIENT_SECRET : this.customTenantId;
+
+    const basicCreds = tenantId + ':' +appId + ":" + appSecret;
+
+    console.log(basicCreds);
+
     this.props.onLoggedIn({ 
       type: 'Basic',
       name: this.customAppId,
-      accessToken: btoa(this.customTenantId + ':' +this.customAppId + ":" + this.customAppSecret)
+      accessToken: btoa(basicCreds)
   })
 }
 
   render() {
+
+    console.log("Login render...");
+
     return(
       <div className='login'>
         <div className="main-block">

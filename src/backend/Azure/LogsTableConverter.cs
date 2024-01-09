@@ -7,7 +7,7 @@ namespace FunctionApp.Azure
 {
     public static class LogsTableConverter
     {
-        public static IEnumerable<SyncJob> ToSyncJobInfoes(this LogsTable table)
+        public static IEnumerable<SyncJob> ToSyncJobInfoes(this LogsTable table, string workspaceId)
         {
             foreach (var row in table.Rows)
             {
@@ -27,6 +27,7 @@ namespace FunctionApp.Azure
                 {
                     Id = props.JobId,
                     EmployeeId = props.EmployeeId,
+                    WorkspaceId = workspaceId,
                     Status = status,
                     Properties = props
                 };

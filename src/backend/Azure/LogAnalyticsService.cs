@@ -25,7 +25,7 @@ namespace FunctionApp.Azure
             if (result.Value.Status != LogsQueryResultStatus.Success)
                 throw new ConflictException(result.Value.Error.ToString());
 
-            return result.Value.Table.ToSyncJobInfoes();
+            return result.Value.Table.ToSyncJobInfoes(workspaceId);
         }
 
         public async Task<SyncJob> SearchByJobId(string workspaceId, string jobId, DateTimeOffset start, TimeSpan duration)
@@ -40,7 +40,7 @@ namespace FunctionApp.Azure
             if (result.Value.Table.Rows.Count != 1)
                 throw new WorkFlowException(HttpStatusCode.NotFound, $"Job {jobId} is not found");
 
-            return result.Value.Table.ToSyncJobInfoes().Single();
+            return result.Value.Table.ToSyncJobInfoes(workspaceId).Single();
         }
     }
 }

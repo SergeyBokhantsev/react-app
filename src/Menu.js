@@ -5,7 +5,7 @@ import BySyncJobId from "./Search/BySyncJobId";
 const Menu = (props) => {
 
     const searchByJobIdHandler = () =>{
-        setMenuContent(<BySyncJobId onBackClick={() => resetMenu()} client={props.client}/>);
+        setMenuContent(<BySyncJobId onBackClick={() => resetMenu()} client={props.client} workspaces={props.workspaces}/>);
     }
 
     const defaultContent = (

@@ -5,10 +5,10 @@ import "./WorkspaceLoader.css"
 const WorkspaceLoader = (props) => {
 
     useEffect(() => {
-        new ApiClient().getWorkspaces().then((result) => {
-            props.onWorkspaces(result);
-        });
-      })
+        new ApiClient().getWorkspaces()
+                       .then(workspaces => props.onWorkspaces(workspaces))}
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        , []);      
 
     return( 
         <div className='capt'>
