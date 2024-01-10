@@ -1,5 +1,7 @@
 import "./BySyncJobId.css"
 import { useState } from 'react'
+import Job from "./../Items/Job"
+import JobDetails from "../Items/JobDetails"
 
 const BySyncJobId = (props) =>{
 
@@ -8,6 +10,7 @@ const BySyncJobId = (props) =>{
     const [range, setRange] = useState("3");
     const [related, setRelated] = useState(0);
     const [jobs, setJobs] = useState([]);
+    const [selectedJob, setSelectedJob] = useState();
 
     const workspaceItemClickHandler = (event) => {
         const newSelectedState = event.target.className !== "w-item-selected";
@@ -15,17 +18,23 @@ const BySyncJobId = (props) =>{
             return x.map(item => {
                return {
                 ...item,
-                selected: item.id === event.target.id ? newSelectedState : item.selected
+                selected: item.Id === event.target.id ? newSelectedState : item.selected
                };
             });
         });
     }
 
+    const sortAndSetJobs = (foundJobs) => {
+        console.log(foundJobs);
+        const sortedByTime = foundJobs.sort((a, b) => a.TimeGenerated < b.TimeGenerated ? 1 : -1);
+        setJobs(x => sortedByTime);
+    } 
+
     const searchClickHandler = () => {
         setJobs(x => []); // clear current jobs
-        const selectedWorkspaces = workspaces.filter(x => x.selected === true).map(x => x.id);
+        const selectedWorkspaces = workspaces.filter(x => x.selected === true).map(x => x.Id);
         props.client.searchJobById(jobId, selectedWorkspaces, range, related)
-                    .then(foundJobs => setJobs(x => foundJobs));
+                    .then(foundJobs => sortAndSetJobs(foundJobs));
     }
 
     console.log(jobs);
@@ -36,6 +45,11 @@ const BySyncJobId = (props) =>{
 
     const relatedChangeHandler = (event) => {
         setRelated(event.target.value);
+    }
+
+    const jobClickHandler = (job) => {
+        console.log(job);
+        setSelectedJob(job);
     }
 
     return (
@@ -54,18 +68,23 @@ const BySyncJobId = (props) =>{
                         <option value="31">1 Month</option>
                         <option value="90">Max</option>
                         </select></span></p>
-                    <p><span>Take: <input className="text-input" style={{ width: "100px" }} type="number" min={0} max={30} value={related} onChange={relatedChangeHandler}/></span></p>
+                    <p><span>Take: <input className="text-input" style={{ width: "100px" }} type="number" min={0} max={50} value={related} onChange={relatedChangeHandler}/></span></p>
                 </div>
-                <div className="d-workspaces">
-                    {workspaces.map(x => <label key={x.id} id={x.id} className={x.selected ? "w-item-selected" : "w-item"} onClick={workspaceItemClickHandler}>{x.name}</label>)}
+                <div className="d-search-props">
+                    <div className="d-search-props" style={{padding: "0 0 8px 0"}}>
+                        <label>Select AI Workspaces to search in</label>
+                    </div>
+                    <div className="d-workspaces">
+                        {workspaces.map(x => <label key={x.Id} id={x.Id} className={x.selected ? "w-item-selected" : "w-item"} onClick={workspaceItemClickHandler}>{x.Name}</label>)}
+                    </div>
                 </div>
            </div>
            <div className="d-content">
                 <div className="d-job-list">
-                    {jobs.map(x => <p key={x.Id}><label >{x.Id}</label></p>)}
+                    {jobs.map(x => <Job key={x.Properties.JobId} data={x} onJobClick={jobClickHandler} isSelected={selectedJob !== undefined && selectedJob.Properties.JobId === x.Properties.JobId}/>)}
                 </div>
                 <div className="d-job-info">
-
+                    {selectedJob !== undefined && <JobDetails data={selectedJob} workspaces={workspaces}/>}
                 </div>
            </div>
         </div>);

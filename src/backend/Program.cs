@@ -1,14 +1,35 @@
 using FunctionApp.Middleware;
-using Microsoft.Azure.Functions.Worker.Middleware;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.DependencyInjection;
+
+
+//using Microsoft.Azure.Functions.Worker.Middleware;
 using Microsoft.Extensions.Hosting;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using Azure.Core.Serialization;
+using FunctionApp.Extensions;
+using FunctionApp.Azure;
 
-var host = new HostBuilder()
-    .ConfigureFunctionsWorkerDefaults(configure =>
+internal class Program
+{
+    private static void Main(string[] args)
     {
-        configure.UseMiddleware<ExceptionHandlingMiddleware>()
-                 .UseMiddleware<TokenExtractionMiddleware>()
-                 .UseDefaultWorkerMiddleware();
-    })
-    .Build();
+        var host = new HostBuilder()
+        .ConfigureFunctionsWorkerDefaults(configure =>
+        {
+            configure.UseMiddleware<ExceptionHandlingMiddleware>()
+                     .UseMiddleware<TokenExtractionMiddleware>()
+                     .UseDefaultWorkerMiddleware();
 
-host.Run();
+            configure.UseNewtonsoftJson();
+
+            configure.Services.AddScoped<ICache, Cache>(sp => new Cache(Environment.GetEnvironmentVariable("RedisConnectionString") ?? throw new Exception("RedisConnectioString variable is not set")));
+        })
+        .Build();
+
+        host.Run();
+    }
+}

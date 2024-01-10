@@ -18,6 +18,8 @@
 	- Also in 'Authentication' tab check the 'Access tokens (for implicit flow)' checkbox
 2. Assign 'Reader' role for the Entra App in all required AI Workspaces.
 3. Same way, assign 'Reader' role in AI Workspaces for Users that mut be permitted to access the logs.
+4. In Azure Functions backend properties on Azure Portal need to add Frontend URL into CORS-allowed list
+5. In Backend App Configuration Tab add RedisConnectionString parameter
 
 # References
 

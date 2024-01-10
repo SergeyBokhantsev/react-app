@@ -1,0 +1,31 @@
+.rowww {
+    margin: -3px 0 0 0;
+}
+
+.rowww-selected {
+    margin: -3px 0 0 0;
+    background-color: rgb(92, 60, 122);
+}
+
+
+.row-id {
+    color: darkcyan;
+    font-weight: bold;
+}
+
+.row-id-target {
+    color: rgb(203, 255, 15);
+    font-weight: bold;
+}
+
+.job-message {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    width: inherit;
+    display: block;
+  }
+
+  .job-root:hover {
+    background-color: rgb(23, 56, 85);
+  }

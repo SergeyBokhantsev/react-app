@@ -19,6 +19,9 @@ namespace FunctionApp.Middleware
 {
     public class TokenExtractionMiddleware : IFunctionsWorkerMiddleware
     {
+        public const string AzureCredential = nameof(AzureCredential);
+        public const string IdentityHash = nameof(IdentityHash);
+
         public Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
         {
             if (context?.BindingContext?.BindingData?.TryGetValue("Headers", out var headersObject) == true
@@ -34,7 +37,8 @@ namespace FunctionApp.Middleware
                     {
                         token = token.Replace("Bearer ", string.Empty, StringComparison.OrdinalIgnoreCase);
                         var credential = DelegatedTokenCredential.Create((ctx, ct) => new AccessToken(token, DateTimeOffset.Now.AddHours(3)));
-                        context.Items.Add(nameof(TokenExtractionMiddleware), credential);
+                        context.Items.Add(AzureCredential, credential);
+                        context.Items.Add(IdentityHash, token.GetHashCode().ToString());
                     }
                     else if (token.StartsWith("Basic "))
                     {
@@ -43,8 +47,13 @@ namespace FunctionApp.Middleware
                         var tenantId = basicCreds[0];
                         var appId = basicCreds[1];
                         var appSecret = basicCreds[2];
-                        context.Items.Add(nameof(TokenExtractionMiddleware), new ClientSecretCredential(tenantId, appId, appSecret));
+                        context.Items.Add(AzureCredential, new ClientSecretCredential(tenantId, appId, appSecret));
+                        context.Items.Add(IdentityHash, token.GetHashCode().ToString());
                     }
+                }
+                else
+                {
+                    context.Items.Add(IdentityHash, "Anonimous");
                 }
             }
 

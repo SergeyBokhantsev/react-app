@@ -16,19 +16,19 @@ namespace FunctionApp.Azure
             client = new LogsQueryClient(credential);
         }
 
-        public async Task<IEnumerable<SyncJob>> SearchByEmployeeIdStartingFrom(string workspaceId, object employeeId, DateTime datetime, int count, bool forward)
+        public async Task<IEnumerable<IDictionary<string, object?>>> SearchByEmployeeIdStartingFrom(string workspaceId, object employeeId, DateTime datetime, int count, bool forward)
         {
-            var query = $"AppEvents | where Name startswith 'Jobs/' and tostring(Properties.EmployeeId) == '{employeeId}' and TimeGenerated {(forward ? ">" : "<")} todatetime('{datetime.ToString("O")}Z') | take {count}";
+            var query = $"AppEvents | where Name startswith 'Jobs/' and tostring(Properties.EmployeeId) == '{employeeId}' and TimeGenerated {(forward ? ">" : "<")} todatetime('{datetime.ToString("O")}') | take {count}";
 
             var result = await client.QueryWorkspaceAsync(workspaceId, query, QueryTimeRange.All);
 
             if (result.Value.Status != LogsQueryResultStatus.Success)
                 throw new ConflictException(result.Value.Error.ToString());
 
-            return result.Value.Table.ToSyncJobInfoes(workspaceId);
+            return result.Value.Table.ToDictionary(workspaceId);
         }
 
-        public async Task<SyncJob> SearchByJobId(string workspaceId, string jobId, DateTimeOffset start, TimeSpan duration)
+        public async Task<IDictionary<string, object?>> SearchByJobId(string workspaceId, string jobId, DateTimeOffset start, TimeSpan duration)
         {
             var query = $"AppEvents | where Name startswith 'Jobs/' and tostring(Properties.JobId) == '{jobId}'";
 
@@ -40,7 +40,7 @@ namespace FunctionApp.Azure
             if (result.Value.Table.Rows.Count != 1)
                 throw new WorkFlowException(HttpStatusCode.NotFound, $"Job {jobId} is not found");
 
-            return result.Value.Table.ToSyncJobInfoes(workspaceId).Single();
+            return result.Value.Table.ToDictionary(workspaceId).Single();
         }
     }
 }

@@ -1,0 +1,16 @@
+.props-div {
+    display: grid;
+    text-align: left;
+    margin: 10px;
+    background-color: rgb(51, 60, 68);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.key-label {
+    color: yellow;
+}
+
+.download-link {
+    padding: 10px 20px 10px 20px;
+}

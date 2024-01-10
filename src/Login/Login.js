@@ -68,7 +68,7 @@ class Login extends Component {
   }
 
   customAppSecretChangeHandler(event) {
-    this.customAppSecret = event.target.value;
+    this.customApSecret = event.target.value;
  }
 
  isEmpty(value) {

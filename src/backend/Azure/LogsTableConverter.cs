@@ -1,50 +1,41 @@
 ﻿using Azure.Monitor.Query.Models;
 using FunctionApp.Exceptions;
 using FunctionApp.Models;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace FunctionApp.Azure
 {
     public static class LogsTableConverter
     {
-        public static IEnumerable<SyncJob> ToSyncJobInfoes(this LogsTable table, string workspaceId)
+        public static IEnumerable<Dictionary<string, object?>> ToDictionary(this LogsTable table, string workspaceId)
         {
             foreach (var row in table.Rows)
             {
-                var props = row.GetAndDeserialize<SyncJobProperties>("Properties")
-                            ?? throw new ConflictException("Cannot parse the Properties column");
+                var result = new Dictionary<string, object?>();
+                result["WorkspaceId"] = workspaceId;
 
-                if (string.IsNullOrWhiteSpace(props.JobId))
-                    throw new ConflictException("JobId is not found in the Properties column");
-
-                if (string.IsNullOrWhiteSpace(props.EmployeeId))
-                    throw new ConflictException("EmployeeId is not found in the Properties column");
-
-                var name = row.GetString("Name");
-                var status = name.Substring("Jobs/".Length);
-
-                var job = new SyncJob
+                for (int i = 0; i < table.Columns.Count; ++i)
                 {
-                    Id = props.JobId,
-                    EmployeeId = props.EmployeeId,
-                    WorkspaceId = workspaceId,
-                    Status = status,
-                    Properties = props
-                };
-                  
-                job.AppRoleInstance = row.GetString("AppRoleInstance");
-                job.Time = (row.GetDateTimeOffset("TimeGenerated") ?? throw new ConflictException("Cannot parse the TimeGenerated column")).DateTime;
-                job.OperationName = row.GetString("OperationName");
-                job.AppVersion = row.GetString("AppVersion");
+                    switch (table.Columns[i].Type.ToString())
+                    {
+                        case "dynamic":
+                            result[table.Columns[i].Name] = 
+                                JsonSerializer.CreateDefault()
+                                .Deserialize(new JsonTextReader(new StringReader(row.GetString(i))));
+                            break;
 
-                yield return job;
+                        case "datetime":
+                            result[table.Columns[i].Name] = row.GetDateTimeOffset(i)!.Value.UtcDateTime;
+                            break;
+
+                        default:
+                            result[table.Columns[i].Name] = row[i];
+                            break;
+                    }
+                }
+
+                yield return result;
             }
-        }
-
-        private static T? GetAndDeserialize<T>(this LogsTableRow row, string name)
-        {
-            var str = row.GetString(name);
-            return JsonSerializer.Deserialize<T?>(str);
         }
     }
 }
