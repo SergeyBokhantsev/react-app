@@ -17,14 +17,10 @@ const App = () => {
   }, []);
 
   const loginHandler = (creds) => {
-    console.log('logged in');
-    console.log(creds);
     setCredentials(creds);
   }
 
   const workspacesHandler = (ws) => {
-    console.log("App::workspacesHandler {ws}");
-    console.log(ws)
     setWorkspaces(ws);
   }
 

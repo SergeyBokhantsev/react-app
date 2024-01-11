@@ -13,8 +13,6 @@ class Login extends Component {
   constructor(props){
     super(props);
 
-    console.log("Login constructor  ...");
-
     this.login = this.login.bind(this)
 
     this.publicClientApplication = new PublicClientApplication({
@@ -31,7 +29,6 @@ class Login extends Component {
   }
   
   async login(){
-    console.log("begin login");
     try{
   
       await this.publicClientApplication.initialize();
@@ -41,8 +38,6 @@ class Login extends Component {
           scopes: msal_config.scopes,
           prompt: "select_account"
         }).then((response) => {
-          console.log(response);
-
           this.props.onLoggedIn({ 
                   type: 'Bearer',
                   name: response.account.name,
@@ -83,8 +78,6 @@ loginWithCustomCredentials() {
 
     const basicCreds = tenantId + ':' +appId + ":" + appSecret;
 
-    console.log(basicCreds);
-
     this.props.onLoggedIn({ 
       type: 'Basic',
       name: this.customAppId,
@@ -93,9 +86,6 @@ loginWithCustomCredentials() {
 }
 
   render() {
-
-    console.log("Login render...");
-
     return(
       <div className='login'>
         <div className="main-block">

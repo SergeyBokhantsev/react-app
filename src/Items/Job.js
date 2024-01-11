@@ -15,13 +15,8 @@ const Job = (props) => {
 
     const message = props.data.Properties.Message;
 
-console.log(props.isSelected);
-
     const rootDivClassName = props.isSelected === true ? "rowww-selected" : "job-root";
     const rowIdClassName = props.data.IsTarget ? "row-id-target" : "row-id";
-
-    console.log("DDDDDDDD");
-    console.log(props.data);
 
     return (
         <div className={rootDivClassName} onClick={() => props.onJobClick(props.data)}>            

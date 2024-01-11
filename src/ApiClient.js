@@ -17,8 +17,20 @@ class ApiClient {
         };        
     }
 
+    stringToByteArray(str) {
+        const encoder = new TextEncoder();
+        return encoder.encode(str);
+      }
+      
+    byteArrayToBase64(byteArray) {
+        let binary = '';
+        byteArray.forEach(byte => {
+          binary += String.fromCharCode(byte);
+        });
+        return btoa(binary);
+      }
+
     async getWorkspaces() {
-        console.log('API getWorkspaces');
         const response = await fetch(api_config.url + 'get-workspaces');
         const data = await response.json();
         return data;
@@ -30,6 +42,14 @@ class ApiClient {
 
         const data = await response.json();
         return data;
+    }
+
+    async downloadJobLog(url) {
+        const bytes = this.stringToByteArray(url);
+        const base64 = this.byteArrayToBase64(bytes);
+        const response = await fetch(api_config.url + 'get-job-log-by-url?url=' + base64);
+        const lines = await response.json();
+        return lines;
     }
 }
 

@@ -2,6 +2,7 @@ import "./BySyncJobId.css"
 import { useState } from 'react'
 import Job from "./../Items/Job"
 import JobDetails from "../Items/JobDetails"
+import JobLogInvestigation from "../Items/JobLogInvestigation"
 
 const BySyncJobId = (props) =>{
 
@@ -11,6 +12,7 @@ const BySyncJobId = (props) =>{
     const [related, setRelated] = useState(0);
     const [jobs, setJobs] = useState([]);
     const [selectedJob, setSelectedJob] = useState();
+    const [jobLog, setJobLog] = useState();
 
     const workspaceItemClickHandler = (event) => {
         const newSelectedState = event.target.className !== "w-item-selected";
@@ -25,7 +27,6 @@ const BySyncJobId = (props) =>{
     }
 
     const sortAndSetJobs = (foundJobs) => {
-        console.log(foundJobs);
         const sortedByTime = foundJobs.sort((a, b) => a.TimeGenerated < b.TimeGenerated ? 1 : -1);
         setJobs(x => sortedByTime);
     } 
@@ -48,8 +49,17 @@ const BySyncJobId = (props) =>{
     }
 
     const jobClickHandler = (job) => {
-        console.log(job);
+        setJobLog(undefined);
         setSelectedJob(job);
+    }
+
+    const investigateJobLogHandler = (url) => {
+        props.client.downloadJobLog(url)
+             .then(lines => setJobLog(lines));
+    }
+
+    const jobLogInvestigationBackClickHandler = () => {
+        setJobLog();        
     }
 
     return (
@@ -68,7 +78,7 @@ const BySyncJobId = (props) =>{
                         <option value="31">1 Month</option>
                         <option value="90">Max</option>
                         </select></span></p>
-                    <p><span>Take: <input className="text-input" style={{ width: "100px" }} type="number" min={0} max={50} value={related} onChange={relatedChangeHandler}/></span></p>
+                    <p><span>Take: <input title="Number of previous and subsequent sessions to get" className="text-input" style={{ width: "100px" }} type="number" min={0} max={50} value={related} onChange={relatedChangeHandler}/></span></p>
                 </div>
                 <div className="d-search-props">
                     <div className="d-search-props" style={{padding: "0 0 8px 0"}}>
@@ -80,11 +90,13 @@ const BySyncJobId = (props) =>{
                 </div>
            </div>
            <div className="d-content">
+                {jobLog === undefined && 
                 <div className="d-job-list">
                     {jobs.map(x => <Job key={x.Properties.JobId} data={x} onJobClick={jobClickHandler} isSelected={selectedJob !== undefined && selectedJob.Properties.JobId === x.Properties.JobId}/>)}
-                </div>
+                </div>}
                 <div className="d-job-info">
-                    {selectedJob !== undefined && <JobDetails data={selectedJob} workspaces={workspaces}/>}
+                    {jobLog !== undefined && <JobLogInvestigation lines={jobLog} onBackClick={jobLogInvestigationBackClickHandler}/>}
+                    {selectedJob !== undefined && jobLog === undefined && <JobDetails data={selectedJob} workspaces={workspaces} onInvestigateJobLog={investigateJobLogHandler}/>}
                 </div>
            </div>
         </div>);

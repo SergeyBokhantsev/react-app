@@ -37,12 +37,19 @@ const JobDetails = (props) => {
         }
     }
 
+    const jobLogClickHandler = () => {
+        props.onInvestigateJobLog(props.data.Properties.JobLogUrl);
+    }
+
     return (
         <div>
             <label>Base Props</label>
             <div className="props-div">
                 {rootProps.map(x => <span key={x.key}><label className="key-label">{x.key}: </label><label>{x.value}</label></span>)}
-                <a className="download-link" href={props.data.Properties.JobLogUrl}>Download Sync Dump</a>
+                <span>
+                    <a className="download-link" href={props.data.Properties.JobLogUrl}>Download Sync Dump</a>
+                    <button className="button-small" onClick={jobLogClickHandler}>Investigate job.log</button>
+                </span>
             </div>
             <label>Custom Props</label>
             <div className="props-div">

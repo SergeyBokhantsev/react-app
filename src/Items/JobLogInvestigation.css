@@ -1,0 +1,57 @@
+.log-root-div {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.log-line-fatal {
+    white-space: pre;
+  overflow: hidden;   
+  display: inline-block; 
+  max-width: fit-content; 
+  background-color: rgb(0, 6, 83);
+}
+
+.log-line-error {
+    white-space: pre;
+  overflow: hidden;   
+  display: inline-block; 
+  max-width: fit-content; 
+  background-color: crimson;
+}
+
+.log-line-warning {
+    white-space: nowrap;
+  overflow: hidden;   
+  display: inline-block; 
+  max-width: fit-content; 
+  background-color: rgb(73, 94, 0);
+}
+
+.log-line-info {
+    white-space: nowrap;
+    overflow: hidden;   
+    display: inline-block; 
+    max-width: fit-content; 
+}
+
+.log-line-debug {
+    white-space: nowrap;
+    overflow: hidden;   
+    display: inline-block; 
+    max-width: fit-content; 
+  background-color: rgb(48, 48, 48);
+}
+
+.log-line-trace {
+  white-space: nowrap;
+  overflow: hidden;   
+  display: inline-block; 
+  max-width: fit-content; 
+  background-color: rgb(48, 48, 48);
+}
+
+.btn-log-filter {
+    background-color: rgb(163, 106, 0);
+}
