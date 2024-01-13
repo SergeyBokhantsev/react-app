@@ -40,6 +40,12 @@ class ApiClient {
         const response = await fetch(api_config.url + 'search-by-job-id?jobId=' + id +'&workspaceId=' + workspaces.join(':') + '&days=' + range + '&related=' + related, 
                                      this.getFetchParams());
 
+        if (response.status === 404)
+            throw new Error("Job was not found");
+
+        if (response.status !== 200)
+            throw new Error(`Unexpected server responce: ${response.status}`);
+
         const data = await response.json();
         return data;
     }

@@ -108,7 +108,7 @@ namespace FunctionApp.Functions
                 var lines = new List<string>();
                 var sb = new StringBuilder();
 
-                foreach (var line in text.Split(Environment.NewLine).Select(x => x.Trim()))
+                foreach (var line in text.Split('\r','\n').Select(x => x.Trim()))
                 {
                     if (Regex.IsMatch(line, "^\\d\\d\\d\\d-\\d\\d-\\d\\d") && sb.Length > 0)
                     {

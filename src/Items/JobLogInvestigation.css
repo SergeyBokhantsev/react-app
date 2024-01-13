@@ -6,50 +6,56 @@
 }
 
 .log-line-fatal {
-    white-space: pre;
+    white-space: break-spaces;
   overflow: hidden;   
   display: inline-block; 
   max-width: fit-content; 
   background-color: rgb(0, 6, 83);
+  margin-bottom: -18px;
 }
 
 .log-line-error {
-    white-space: pre;
+    white-space: break-spaces;
   overflow: hidden;   
   display: inline-block; 
   max-width: fit-content; 
   background-color: crimson;
+  margin-bottom: -18px;
 }
 
 .log-line-warning {
-    white-space: nowrap;
+    white-space: break-spaces;
   overflow: hidden;   
   display: inline-block; 
   max-width: fit-content; 
   background-color: rgb(73, 94, 0);
+  margin-bottom: -18px;
 }
 
 .log-line-info {
-    white-space: nowrap;
+    white-space: break-spaces;
     overflow: hidden;   
     display: inline-block; 
     max-width: fit-content; 
+    margin-bottom: -18px;
 }
 
 .log-line-debug {
-    white-space: nowrap;
+    white-space: break-spaces;
     overflow: hidden;   
     display: inline-block; 
     max-width: fit-content; 
   background-color: rgb(48, 48, 48);
+  margin-bottom: -18px;
 }
 
 .log-line-trace {
-  white-space: nowrap;
+  white-space: break-spaces;
   overflow: hidden;   
   display: inline-block; 
   max-width: fit-content; 
   background-color: rgb(48, 48, 48);
+  margin-bottom: -18px;
 }
 
 .btn-log-filter {

@@ -32,10 +32,27 @@ const BySyncJobId = (props) =>{
     } 
 
     const searchClickHandler = () => {
-        setJobs(x => []); // clear current jobs
+        if (jobId === null || jobId === undefined || jobId === "") {
+            props.onMessage("Enter Job Id");
+            return;
+        }
+
+        // clear current jobs
+        setJobs(x => []); 
+        setSelectedJob();
+        
+        props.onModal("Searching...");
+
         const selectedWorkspaces = workspaces.filter(x => x.selected === true).map(x => x.Id);
+
+        if (selectedWorkspaces.length === 0) {
+            props.onMessage("Select Workspace(s)");
+            return;
+        }
+
         props.client.searchJobById(jobId, selectedWorkspaces, range, related)
-                    .then(foundJobs => sortAndSetJobs(foundJobs));
+                    .then(foundJobs => { props.onModal(null); sortAndSetJobs(foundJobs);})                    
+                    .catch(err => props.onMessage(`Search failed: ${err.message}`));                    
     }
 
     console.log(jobs);
@@ -54,8 +71,9 @@ const BySyncJobId = (props) =>{
     }
 
     const investigateJobLogHandler = (url) => {
+        props.onModal("Downloading job.log");
         props.client.downloadJobLog(url)
-             .then(lines => setJobLog(lines));
+             .then(lines => { props.onModal(null); setJobLog(lines); });
     }
 
     const jobLogInvestigationBackClickHandler = () => {
@@ -73,7 +91,7 @@ const BySyncJobId = (props) =>{
                 <div className="d-search-props">
                     <p><span>Range: <select className="range-select" value={range} onChange={rangeChangeHandler}>
                         <option value="1">1 Day</option>
-                        <option value="3">3 Days</option> 
+                        <option value="3">3 Days</option>
                         <option value="7">1 Week</option>
                         <option value="31">1 Month</option>
                         <option value="90">Max</option>
