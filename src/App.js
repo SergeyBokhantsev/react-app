@@ -10,7 +10,7 @@ const App = () => {
 
   console.log("enter App...");
 
-  const [credentials, setCredentials] = useState();
+  const [credentials, setCredentials] = useState(null);
   const [workspaces, setWorkspaces] = useState();
   const [message, setMessage] = useState({ closeButton: false });
 
@@ -36,11 +36,18 @@ const App = () => {
       });
   }
 
-   const content = credentials == null 
+
+  const getApiClientOrNull = () => {
+      return (credentials !== null && credentials.type  !== 'Anonymous') ? new ApiClient(credentials) : null;
+  }
+
+  const needToLoadWorkspaces = credentials !== null && credentials.type  !== 'Anonymous' && workspaces === undefined;
+
+   const content = credentials === null 
    ? <Login onLoggedIn={loginHandler}/> 
-   : workspaces == null
+   : needToLoadWorkspaces
    ? <WorkspaceLoader onWorkspaces={workspacesHandler} onMessage={messageHandler}/>
-   : <Menu client={new ApiClient(credentials)} workspaces={workspaces} onMessage={messageHandler} onModal={modalScreenHandler}/>
+   : <Menu client={getApiClientOrNull()} workspaces={workspaces} onMessage={messageHandler} onModal={modalScreenHandler}/>
 
   const showMessage = message !== undefined && message !== null && message.text !== undefined && message.text !== null && message.text !== "";
 

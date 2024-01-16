@@ -85,11 +85,19 @@ loginWithCustomCredentials() {
   })
 }
 
+loginAnonymous() {
+  this.props.onLoggedIn({ 
+    type: 'Anonymous',
+    name: 'Anonymous'
+})
+}
+
   render() {
     return(
       <div className='login'>
         <div className="main-block">
           <button onClick={() => this.login()}>Log-in with RevenueGrid Account</button>
+          <button onClick={() => this.loginAnonymous()} className="button-small">I only want to use anonymous functionality</button>
         </div>
         <div className="main-block">
           <p>or use your custom app credentials</p>

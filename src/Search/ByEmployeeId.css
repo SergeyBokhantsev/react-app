@@ -1,0 +1,78 @@
+.root {
+   
+    margin: 0;
+    background-color: #323742;
+    padding: 20px 0 0 0;
+  }
+  
+.d-header {
+  display: flex;
+  background-color: #323742;
+}
+
+.d-content {
+  display: flex;
+}
+
+.d-job-list {
+  width: 400px;
+  margin: 20px;
+}
+
+.btn-back {
+  margin: auto 70px 20px 20px;
+  padding: 40px;
+}
+
+.btn-search {
+  padding: 5px 25px 5px 25px;
+  border-radius: 3px;
+  background-color: #1f3972;
+}
+
+.text-input {
+  padding: 4px;
+  width: 360px;
+}
+
+.range-select {
+  background-color: #323742;
+}
+
+.d-job-id {
+  background-color: #323742;
+}
+
+.d-search-props {
+  text-align: left;
+  margin: 0 40px 0 80px;
+  background-color: #323742;
+}
+
+.d-workspaces {
+  text-align: left;
+  background-color: #323742;
+}
+
+.label-workspace {
+  width: 400px;
+}
+
+.w-item {
+  border-color: rgb(99, 99, 99);
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;  
+  margin: 0 10px 0 10px;
+  padding: 5px;
+}
+
+.w-item-selected {
+  border-color: rgb(99, 99, 99);
+  border-width: 1px;
+  border-style: solid;
+  background-color: #164e34;
+  cursor: pointer;  
+  margin: 0 10px 0 10px;  
+  padding: 5px;
+}

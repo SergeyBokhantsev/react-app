@@ -49,14 +49,12 @@ const JobLogInvestigation = (props) => {
     const debugCount = props.lines.filter(x => x.includes(" DEBUG ")).length;
     const traceCount = props.lines.filter(x => x.includes(" TRACE ")).length;
 
-    const backClickHandler = () => {
-        props.onBackClick();
-    }
-    
+    const isAllChecked = filterBy.fatal && filterBy.error && filterBy.warn && filterBy.info && filterBy.debug && filterBy.trace;
+
     const onFilterChange = (filter) => {
         switch(filter)
         {
-            case "all": setFilterBy(x => ({ fatal: !x.fatal, error:!x.error, warn: !x.warn, info:!x.info, debug:!x.debug, trace:!x.trace })); break;
+            case "all": setFilterBy(x => ({ fatal: !isAllChecked, error:!isAllChecked, warn: !isAllChecked, info:!isAllChecked, debug:!isAllChecked, trace:!isAllChecked })); break;
             case "fatal": setFilterBy(x => ({...x, fatal: !x.fatal})); break;
             case "error": setFilterBy(x => ({...x, error: !x.error})); break;
             case "warn": setFilterBy(x => ({...x, warn: !x.warn})); break;
@@ -73,7 +71,7 @@ const JobLogInvestigation = (props) => {
         let checked = false;
         
         switch (filter) {
-            case "all": checked = filterBy.fatal && filterBy.error && filterBy.warn && filterBy.info && filterBy.debug && filterBy.trace; break;
+            case "all": checked = false; break;
             case "fatal": checked = filterBy.fatal; break;
             case "error": checked = filterBy.error; break;
             case "warn": checked = filterBy.warn; break;
@@ -95,7 +93,7 @@ const JobLogInvestigation = (props) => {
         <div className="log-root-div">
             <div style={{"text-align": "left"}}>
                 <span>
-                    <button onClick={backClickHandler}>Back to Job List</button>
+                    {props.onBackClick !== undefined && <button onClick={() => props.onBackClick()}>Back</button>}
                     <button onClick={() => onFilterChange("all")} style={getFilterButtonStyle("all")} className="btn-log-filter">ALL ({props.lines.length})</button>
                     <button onClick={() => onFilterChange("fatal")} style={getFilterButtonStyle("fatal")} className="btn-log-filter">FATAL ({fatalCount})</button>
                     <button onClick={() => onFilterChange("error")} style={getFilterButtonStyle("error")} className="btn-log-filter">ERROR ({errorCount})</button>

@@ -1,6 +1,7 @@
 import "./Common.css";
 import { useState } from 'react'
 import BySyncJobId from "./Search/BySyncJobId";
+import BySyncDumpUrl from "./Search/BySyncDumpUrl";
 
 const Menu = (props) => {
 
@@ -8,9 +9,14 @@ const Menu = (props) => {
         setMenuContent(<BySyncJobId onBackClick={() => resetMenu()} onMessage={msg => props.onMessage(msg)} onModal={msg => props.onModal(msg)} client={props.client} workspaces={props.workspaces}/>);
     }
 
+    const bySyncJobUrlHandler = () => {
+        setMenuContent(<BySyncDumpUrl onBackClick={() => resetMenu()} onMessage={msg => props.onMessage(msg)} onModal={msg => props.onModal(msg)}/>);
+    }
+
     const defaultContent = (
         <div>
-            <button onClick={searchByJobIdHandler}>I have SyncJob Id</button>
+            <button onClick={bySyncJobUrlHandler}>I have SyncJob Download Url</button>
+            { props.client !== null && <button onClick={searchByJobIdHandler}>I have SyncJob Id</button> }
         </div>
     );
 

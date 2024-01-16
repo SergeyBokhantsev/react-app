@@ -3,11 +3,10 @@ import { useState } from 'react'
 import Job from "./../Items/Job"
 import JobDetails from "../Items/JobDetails"
 import JobLogInvestigation from "../Items/JobLogInvestigation"
-import WorkspaceSelect from "../Items/WorkspaceSelect"
 
 const BySyncJobId = (props) =>{
 
-    const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
+    const [workspaces, setWorkspaces] = useState(props.workspaces);
     const [jobId, setJobId] = useState();
     const [range, setRange] = useState("3");
     const [related, setRelated] = useState(0);
@@ -15,9 +14,16 @@ const BySyncJobId = (props) =>{
     const [selectedJob, setSelectedJob] = useState();
     const [jobLog, setJobLog] = useState();
 
-    const selectWorkspaceIdHandler = (ids) => {
-        console.log(ids);
-        setSelectedWorkspaces(ids);
+    const workspaceItemClickHandler = (event) => {
+        const newSelectedState = event.target.className !== "w-item-selected";
+        setWorkspaces(x => {
+            return x.map(item => {
+               return {
+                ...item,
+                selected: item.Id === event.target.id ? newSelectedState : item.selected
+               };
+            });
+        });
     }
 
     const sortAndSetJobs = (foundJobs) => {
@@ -37,6 +43,8 @@ const BySyncJobId = (props) =>{
         
         props.onModal("Searching...");
 
+        const selectedWorkspaces = workspaces.filter(x => x.selected === true).map(x => x.Id);
+
         if (selectedWorkspaces.length === 0) {
             props.onMessage("Select Workspace(s)");
             return;
@@ -46,6 +54,8 @@ const BySyncJobId = (props) =>{
                     .then(foundJobs => { props.onModal(null); sortAndSetJobs(foundJobs);})                    
                     .catch(err => props.onMessage(`Search failed: ${err.message}`));                    
     }
+
+    console.log(jobs);
 
     const rangeChangeHandler = (event) => {
         setRange(event.target.value);
@@ -92,7 +102,9 @@ const BySyncJobId = (props) =>{
                     <div className="d-search-props" style={{padding: "0 0 8px 0"}}>
                         <label>Select AI Workspaces to search in</label>
                     </div>
-                    <WorkspaceSelect workspaces={props.workspaces} onWorkspaceSelected={selectWorkspaceIdHandler}/>
+                    <div className="d-workspaces">
+                        {workspaces.map(x => <label key={x.Id} id={x.Id} className={x.selected ? "w-item-selected" : "w-item"} onClick={workspaceItemClickHandler}>{x.Name}</label>)}
+                    </div>
                 </div>
            </div>
            <div className="d-content">
@@ -102,7 +114,7 @@ const BySyncJobId = (props) =>{
                 </div>}
                 <div className="d-job-info">
                     {jobLog !== undefined && <JobLogInvestigation lines={jobLog} onBackClick={jobLogInvestigationBackClickHandler}/>}
-                    {selectedJob !== undefined && jobLog === undefined && <JobDetails data={selectedJob} workspaces={props.workspaces} onInvestigateJobLog={investigateJobLogHandler}/>}
+                    {selectedJob !== undefined && jobLog === undefined && <JobDetails data={selectedJob} workspaces={workspaces} onInvestigateJobLog={investigateJobLogHandler}/>}
                 </div>
            </div>
         </div>);
