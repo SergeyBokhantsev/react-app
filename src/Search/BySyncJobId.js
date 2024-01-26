@@ -4,6 +4,7 @@ import Job from "./../Items/Job"
 import JobDetails from "../Items/JobDetails"
 import JobLogInvestigation from "../Items/JobLogInvestigation"
 import WorkspaceSelect from "../Items/WorkspaceSelect"
+import SyncDumpInvestigation from "../Items/SyncDumpInvestigation"
 
 const BySyncJobId = (props) =>{
 
@@ -14,6 +15,7 @@ const BySyncJobId = (props) =>{
     const [jobs, setJobs] = useState([]);
     const [selectedJob, setSelectedJob] = useState();
     const [jobLog, setJobLog] = useState();
+    const [syncDump, setSyncDomp] = useState();
 
     const selectWorkspaceIdHandler = (ids) => {
         console.log(ids);
@@ -66,6 +68,12 @@ const BySyncJobId = (props) =>{
              .then(lines => { props.onModal(null); setJobLog(lines); });
     }
 
+    const investigateSyncDumpHandler = (url) => {
+        props.onModal("Downloading SyncDump.xml");
+        props.client.downloadSyncDump(url)
+             .then(xml => { props.onModal(null); setSyncDomp(xml); });
+    }
+
     const jobLogInvestigationBackClickHandler = () => {
         setJobLog();        
     }
@@ -102,7 +110,8 @@ const BySyncJobId = (props) =>{
                 </div>}
                 <div className="d-job-info">
                     {jobLog !== undefined && <JobLogInvestigation lines={jobLog} onBackClick={jobLogInvestigationBackClickHandler}/>}
-                    {selectedJob !== undefined && jobLog === undefined && <JobDetails data={selectedJob} workspaces={props.workspaces} onInvestigateJobLog={investigateJobLogHandler}/>}
+                    {syncDump !== undefined && <SyncDumpInvestigation xml={syncDump} onBackClick={jobLogInvestigationBackClickHandler}/>}
+                    {selectedJob !== undefined && jobLog === undefined && syncDump === undefined && <JobDetails data={selectedJob} workspaces={props.workspaces} onInvestigateJobLog={investigateJobLogHandler} onInvstigateSyncDump={investigateSyncDumpHandler} />}
                 </div>
            </div>
         </div>);

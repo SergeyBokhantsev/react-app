@@ -11,14 +11,6 @@ namespace FunctionApp.Misc
 {
     public static class ZipHelper
     {
-        public static class KnownPath
-        {
-            public const string JobLog = "Logs\\job.log";
-            public const string SyncDump = "Logs\\SyncDump\\sync_dump_";
-            public const string MasterSite = "Logs\\Configuration\\Master_Site.xml";
-            public const string ExchSlaveSite = "Logs\\Configuration\\ExchangeSlave_Site.xml";
-        }
-
         public static async Task<IDictionary<string, int>> SearchTextInZip(Stream stream, string[] fileExtensions, string[] texts)
         {
             Dictionary<string, int> result = new();
@@ -27,9 +19,9 @@ namespace FunctionApp.Misc
             {
                 using (var reader = new StreamReader(unzippedStream))
                 {
-                    var line = await reader.ReadLineAsync();
-                    if (null != line)
-                    {
+                    string? line = null;
+                    while (null != (line = await reader.ReadLineAsync()))
+                    { 
                         foreach (var text in texts)
                         {
                             if (line.Contains(text, StringComparison.OrdinalIgnoreCase))
@@ -46,7 +38,7 @@ namespace FunctionApp.Misc
 
             await Unzip(stream, entry =>
             {
-                if (fileExtensions.Any(ext => entry.FullName.EndsWith(ext)))
+                if (fileExtensions.Any(ext => entry.FullName.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
                     return (e, s) => SearchInFile(e, s);
                 else
                     return null;

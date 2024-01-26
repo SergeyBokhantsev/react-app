@@ -41,6 +41,10 @@ const JobDetails = (props) => {
         props.onInvestigateJobLog(props.data.Properties.JobLogUrl);
     }
 
+    const syncDumpClickHandler = () => {
+        props.onInvstigateSyncDump(props.data.Properties.JobLogUrl);
+    }
+
     return (
         <div>
             <label>Base Props</label>
@@ -49,6 +53,7 @@ const JobDetails = (props) => {
                 <span>
                     <a className="download-link" href={props.data.Properties.JobLogUrl}>Download Sync Dump</a>
                     <button className="button-small" onClick={jobLogClickHandler}>Investigate job.log</button>
+                    <button className="button-small" onClick={syncDumpClickHandler}>Investigate SyncDump.xml</button>
                 </span>
             </div>
             <label>Custom Props</label>

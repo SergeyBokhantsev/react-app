@@ -50,12 +50,39 @@ class ApiClient {
         return data;
     }
 
+    async searchJobsByEmployeeId(id, workspaces, range, search, searchThreshold) {
+
+        let url = api_config.url + 'search-by-employee-id?employeeId=' + id +'&workspaceId=' + workspaces.join(':') + '&minutes=' + range;
+
+        if (search !== undefined && search !== null && search !== "") {
+            const bytes = this.stringToByteArray(search);
+            const base64 = this.byteArrayToBase64(bytes);
+            url += '&search=' + base64 + '&threshold=' + searchThreshold.toString();          
+        }
+           
+        const response = await fetch(url, this.getFetchParams());
+
+        if (response.status !== 200)
+            throw new Error(`Unexpected server responce: ${response.status}`);
+
+        const data = await response.json();
+        return data;
+    }
+
     async downloadJobLog(url) {
         const bytes = this.stringToByteArray(url);
         const base64 = this.byteArrayToBase64(bytes);
         const response = await fetch(api_config.url + 'get-job-log-by-url?url=' + base64);
         const lines = await response.json();
         return lines;
+    }
+
+    async downloadSyncDump(url) {
+        const bytes = this.stringToByteArray(url);
+        const base64 = this.byteArrayToBase64(bytes);
+        const response = await fetch(api_config.url + 'get-syncdump-by-url?url=' + base64);
+        const xml = await response.text()
+        return xml;
     }
 }
 

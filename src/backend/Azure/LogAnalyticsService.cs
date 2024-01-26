@@ -25,7 +25,7 @@ namespace FunctionApp.Azure
             if (result.Value.Status != LogsQueryResultStatus.Success)
                 throw new ConflictException(result.Value.Error.ToString());
 
-            return result.Value.Table.ToDictionary(workspaceId);
+            return result.Value.Table.ToDictionary(workspaceId).ToArray();
         }
 
         public async Task<IDictionary<string, object?>> SearchByJobId(string workspaceId, string jobId, DateTimeOffset start, TimeSpan duration)

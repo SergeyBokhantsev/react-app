@@ -23,20 +23,27 @@ namespace FunctionApp.Azure
             return client.GetStreamAsync(dumpUri);
         }
 
-        public async Task<string> GetJobLogAsync(Uri dumpUri)
+        public async Task<string> GetFile(Uri dumpUri, string filePath)
         {
             var fileStream = await DownloadFileAsync(dumpUri);
 
-            var unzippedStream = await ZipHelper.Unzip(fileStream, ZipHelper.KnownPath.JobLog);
+            var unzippedStream = await ZipHelper.Unzip(fileStream, filePath);
 
             if (null == unzippedStream)
-                throw new Exception("job.log file was not found in the Sync Dump archive");
+                throw new Exception($"{filePath} file was not found in the Sync Dump archive");
 
             using (unzippedStream)
             using (var reader = new StreamReader(unzippedStream))
             {
                 return reader.ReadToEnd();
             }
+        }
+
+        public async Task<IDictionary<string, int>> SearchInFiles(Uri dumpUri, string[] fileExtensions, string text)
+        {
+            var fileStream = await DownloadFileAsync(dumpUri);
+
+            return await ZipHelper.SearchTextInZip(fileStream, fileExtensions, new[] { text });
         }
     }
 }
